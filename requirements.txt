@@ -1,0 +1,27 @@
+# ==============================================================================
+# Revenue Guardian - Python Dependencies
+# ==============================================================================
+
+# Core Agentic Framework
+google-adk>=0.1.0
+pydantic>=2.0.0
+
+# Model Context Protocol (MCP)
+mcp>=1.0.0
+
+# API & Web Server
+fastapi>=0.100.0
+uvicorn>=0.22.0
+
+# Security & Authentication
+pyjwt>=2.8.0
+
+# Executive Dashboard & Visualization
+streamlit>=1.25.0
+plotly>=5.15.0
+pandas>=2.0.0
+
+# Google APIs (Gmail & Calendar integrations)
+google-api-python-client>=2.95.0
+google-auth-httplib2>=0.1.0
+google-auth-oauthlib>=1.0.0
