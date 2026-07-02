@@ -289,11 +289,11 @@ async def run_prediction_analysis(model_name: str = "gemini-2.0-flash") -> Predi
         "and generate a 30-day revenue forecast. Explain the methodology in detail."
     )
 
-    logger.gc = logger.info("Executing Revenue Prediction Agent analysis...")
+    logger.info("Executing Revenue Prediction Agent analysis...")
     response = await runner.run(
         session_id="prediction_analysis_session",
         user_prompt=prompt
     )
 
-    return response.structured_output
- Pals
+    return response.structured_output 
+ 
