@@ -308,11 +308,11 @@ async def execute_live_workflow():
 
     # Populate Recommendations
     with rec_placeholder.container():
-            st.markdown("### 📋 Actions Requiring Approval Today")
-            for rec in summary.todays_recommendations:
-                # Color code urgency
-                badge_color = "#e53935" if rec.urgency == "high" else "#d4a373"
-                st.markdown(f"""
+        st.markdown("### 📋 Actions Requiring Approval Today")
+        for rec in summary.todays_recommendations:
+            # Color code urgency
+            badge_color = "#e53935" if rec.urgency == "high" else "#d4a373"
+            st.markdown(f"""
                 <div style="padding: 15px; border-left: 5px solid {badge_color}; background-color: #161b22; border-radius: 0 8px 8px 0; margin-bottom: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 700; font-size: 16px; color: #ffffff;">{rec.target} - {rec.action_type.replace('_', ' ').title()}</span>
@@ -324,20 +324,20 @@ async def execute_live_workflow():
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-                
-        # Populate Executive Report
-        with report_placeholder.container():
-            st.markdown(summary.executive_report)
-            
-        # Populate Charts
-        with chart_placeholder.container():
-            st.markdown("### 📊 Financial Outlook & Risk Analysis")
-            
-            # Create a dataframe for the charts
-            df_rev = pd.DataFrame({
-                "Category": ["Total ARR", "Revenue at Risk", "30-Day Forecast"],
-                "Value (USD)": [summary.revenue_summary.total_arr, summary.revenue_summary.revenue_at_risk, summary.revenue_summary.forecasted_revenue_next_30_days]
-            })
+
+    # Populate Executive Report
+    with report_placeholder.container():
+        st.markdown(summary.executive_report)
+
+    # Populate Charts
+    with chart_placeholder.container():
+        st.markdown("### 📊 Financial Outlook & Risk Analysis")
+
+        # Create a dataframe for the charts
+        df_rev = pd.DataFrame({
+            "Category": ["Total ARR", "Revenue at Risk", "30-Day Forecast"],
+            "Value (USD)": [summary.revenue_summary.total_arr, summary.revenue_summary.revenue_at_risk, summary.revenue_summary.forecasted_revenue_next_30_days]
+        })
             
             fig = px.bar(
                 df_rev, 
