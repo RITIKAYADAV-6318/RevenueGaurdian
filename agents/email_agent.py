@@ -212,7 +212,7 @@ async def run_email_analysis(model_name: str = "gemini-2.0-flash") -> EmailIntel
     """
     agent = create_email_agent(model_name=model_name)
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, session_service=session_service)
+    runner = Runner(agent=agent, session_service=session_service, app_name="revenue_guardian")
 
     prompt = (
         "Analyze all recent email threads as of 2026-06-30. "

@@ -123,7 +123,7 @@ class RevOpsOrchestrator:
         Returns:
             The structured Pydantic output from the agent.
         """
-        runner = Runner(agent=agent, session_service=self.session_service)
+        runner = Runner(agent=agent, session_service=self.session_service, app_name="revenue_guardian")
         response = await runner.run(session_id=session_id, user_prompt=prompt)
         return response.structured_output
 

@@ -281,7 +281,7 @@ async def run_prediction_analysis(model_name: str = "gemini-2.0-flash") -> Predi
     """
     agent = create_prediction_agent(model_name=model_name)
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, session_service=session_service)
+    runner = Runner(agent=agent, session_service=session_service, app_name="revenue_guardian")
 
     prompt = (
         "Run the revenue prediction models on the active opportunities and customer contracts. "

@@ -279,7 +279,7 @@ async def run_crm_analysis(model_name: str = "gemini-2.0-flash") -> CRMAnalysisR
     """
     agent = create_crm_agent(model_name=model_name)
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, session_service=session_service)
+    runner = Runner(agent=agent, session_service=session_service, app_name="revenue_guardian")
 
     prompt = (
         "Perform a pipeline analysis on the CRM data as of 2026-06-30. "

@@ -214,7 +214,7 @@ async def run_recovery_analysis(model_name: str = "gemini-2.0-flash") -> Recover
     """
     agent = create_recovery_agent(model_name=model_name)
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, session_service=session_service)
+    runner = Runner(agent=agent, session_service=session_service, app_name="revenue_guardian")
 
     prompt = (
         "Analyze the reports from the CRM, Email, Calendar, and Revenue Prediction agents. "

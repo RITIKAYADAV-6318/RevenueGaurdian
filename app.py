@@ -251,14 +251,30 @@ async def execute_live_workflow():
     run_id = f"run_{int(datetime.utcnow().timestamp())}"
     
     with st.spinner("Compiling final structured outputs..."):
-        result = await orchestrator.execute_workflow(run_id)
-        
+        try:
+            result = await orchestrator.execute_workflow(run_id)
+        except Exception as exc:
+            st.error("Workflow failed while generating final outputs.")
+            st.exception(exc)
+            return
+
     # 5. Populate the Dashboard Widgets with Real Data
-    if result.executive_summary:
-        summary = result.executive_summary
-        
-        # Populate KPIs
-        health_placeholder.markdown(f"""
+    if result.failures:
+        failure_lines = []
+        for failure in result.failures:
+            failure_lines.append(f"- **{failure.agent_name}**: {failure.error_message}")
+
+        st.error("The workflow completed with one or more agent failures. The executive report may be incomplete or unavailable.")
+        st.markdown("\n".join(failure_lines))
+
+    if not result.executive_summary:
+        st.warning("No executive summary was generated. Check the failure messages above or the Streamlit server logs for details.")
+        return
+
+    summary = result.executive_summary
+    
+    # Populate KPIs
+    health_placeholder.markdown(f"""
         <div class="metric-card">
             <div class="metric-title">Business Health</div>
             <div class="metric-value" style="color: #56ab2f;">{summary.business_health_score}/100</div>
