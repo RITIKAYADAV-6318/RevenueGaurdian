@@ -18,23 +18,28 @@ async def run_runner_and_get_response(maybe_awaitable) -> Any:
     If a sync generator is provided, it is iterated and the last yielded value returned.
     Otherwise the value is returned directly.
     """
-    # Coroutine (awaitable)
-    if asyncio.iscoroutine(maybe_awaitable):
+    # Awaitables (coroutines, futures, or objects implementing __await__)
+    if asyncio.isawaitable(maybe_awaitable):
         return await maybe_awaitable
 
-    # Async generator
-    if inspect.isasyncgen(maybe_awaitable):
+    # Async generator (async for ...)
+    if inspect.isasyncgen(maybe_awaitable) or hasattr(maybe_awaitable, "__aiter__"):
         last = None
         async for item in maybe_awaitable:
             last = item
         return last
 
-    # Sync generator
-    if inspect.isgenerator(maybe_awaitable):
-        last = None
-        for item in maybe_awaitable:
-            last = item
-        return last
+    # Sync generator (for ...)
+    if inspect.isgenerator(maybe_awaitable) or hasattr(maybe_awaitable, "__iter__"):
+        # Iterate safely; if it's a plain iterable, consume it
+        try:
+            last = None
+            for item in maybe_awaitable:
+                last = item
+            return last
+        except TypeError:
+            # Not iterable - fall through
+            pass
 
-    # Plain value
+    # Fallback: return as-is
     return maybe_awaitable
