@@ -338,26 +338,28 @@ async def execute_live_workflow():
             "Category": ["Total ARR", "Revenue at Risk", "30-Day Forecast"],
             "Value (USD)": [summary.revenue_summary.total_arr, summary.revenue_summary.revenue_at_risk, summary.revenue_summary.forecasted_revenue_next_30_days]
         })
-            
-            fig = px.bar(
-                df_rev, 
-                x="Category", 
-                y="Value (USD)", 
-                color="Category",
-                color_discrete_map={
-                    "Total ARR": "#2e7d32",
-                    "Revenue at Risk": "#c62828",
-                    "30-Day Forecast": "#1565c0"
-                },
-                title="Revenue Overview Breakdown"
-            )
-            fig.update_layout(
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                font_color="#ffffff",
-                showlegend=False
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        
+        fig = px.bar(
+            df_rev,
+            x="Category",
+            y="Value (USD)",
+            color="Category",
+            color_discrete_map={
+                "Total ARR": "#2e7d32",
+                "Revenue at Risk": "#c62828",
+                "30-Day Forecast": "#1565c0",
+            },
+            title="Revenue Overview Breakdown",
+        )
+
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#ffffff",
+            showlegend=False,
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 
 # ==========================================
