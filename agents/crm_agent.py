@@ -31,6 +31,7 @@ from pydantic import BaseModel, Field
 from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+from agents.runner_utils import run_runner_and_get_response
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -288,10 +289,11 @@ async def run_crm_analysis(model_name: str = "gemini-2.0-flash") -> CRMAnalysisR
     )
 
     logger.info("Executing CRM Intelligence Agent analysis...")
-    response = await runner.run(
+    raw = runner.run(
         user_id="system",
         session_id="crm_analysis_session",
         new_message=prompt
     )
 
+    response = await run_runner_and_get_response(raw)
     return response.structured_output

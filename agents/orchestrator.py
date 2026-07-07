@@ -43,6 +43,7 @@ from pydantic import BaseModel, Field
 from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+from agents.runner_utils import run_runner_and_get_response
 
 # Import subagent factories
 from agents.crm_agent import create_crm_agent, CRMAnalysisResult
@@ -124,7 +125,8 @@ class RevOpsOrchestrator:
             The structured Pydantic output from the agent.
         """
         runner = Runner(agent=agent, session_service=self.session_service, app_name="revenue_guardian")
-        response = await runner.run(user_id="system", session_id=session_id, new_message=prompt)
+        raw = runner.run(user_id="system", session_id=session_id, new_message=prompt)
+        response = await run_runner_and_get_response(raw)
         return response.structured_output
 
     async def execute_workflow(self, run_id: str) -> OrchestrationRunResult:
