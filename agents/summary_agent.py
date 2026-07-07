@@ -255,3 +255,8 @@ async def run_executive_summary(model_name: str = "gemini-2.0-flash") -> Executi
     )
 
     return response.structured_output
+        response = await runner.run(
+            user_id="system",
+            session_id="executive_summary_session",
+            new_message=prompt
+        )

@@ -124,7 +124,7 @@ class RevOpsOrchestrator:
             The structured Pydantic output from the agent.
         """
         runner = Runner(agent=agent, session_service=self.session_service, app_name="revenue_guardian")
-        response = await runner.run(session_id=session_id, user_prompt=prompt)
+        response = await runner.run(user_id="system", session_id=session_id, new_message=prompt)
         return response.structured_output
 
     async def execute_workflow(self, run_id: str) -> OrchestrationRunResult:

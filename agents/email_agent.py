@@ -222,8 +222,9 @@ async def run_email_analysis(model_name: str = "gemini-2.0-flash") -> EmailIntel
 
     logger.info("Executing Email Intelligence Agent analysis...")
     response = await runner.run(
+        user_id="system",
         session_id="email_analysis_session",
-        user_prompt=prompt
+        new_message=prompt
     )
 
     return response.structured_output
