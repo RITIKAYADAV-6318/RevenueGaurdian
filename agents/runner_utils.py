@@ -9,6 +9,13 @@ import inspect
 import asyncio
 from typing import Any
 
+from google.genai import types
+
+
+def make_new_message(text: str, role: str = "user") -> types.Content:
+    """Constructs a Google GenAI Content object for Runner.run."""
+    return types.Content(parts=[types.Part.from_text(text=text)], role=role)
+
 
 async def run_runner_and_get_response(maybe_awaitable) -> Any:
     """Consume a coroutine, async generator, or sync generator and return the last item.
@@ -19,27 +26,32 @@ async def run_runner_and_get_response(maybe_awaitable) -> Any:
     Otherwise the value is returned directly.
     """
     # Awaitables (coroutines, futures, or objects implementing __await__)
-    if asyncio.isawaitable(maybe_awaitable):
+    if inspect.isawaitable(maybe_awaitable):
         return await maybe_awaitable
 
     # Async generator (async for ...)
-    if inspect.isasyncgen(maybe_awaitable) or hasattr(maybe_awaitable, "__aiter__"):
+    if inspect.isasyncgen(maybe_awaitable):
         last = None
         async for item in maybe_awaitable:
-            last = item
+            if inspect.isawaitable(item) or inspect.iscoroutine(item):
+                last = await item
+            else:
+                last = item
         return last
 
-    # Sync generator (for ...)
-    if inspect.isgenerator(maybe_awaitable) or hasattr(maybe_awaitable, "__iter__"):
-        # Iterate safely; if it's a plain iterable, consume it
-        try:
-            last = None
-            for item in maybe_awaitable:
+    # Sync generator
+    if inspect.isgenerator(maybe_awaitable):
+        last = None
+        loop = asyncio.get_event_loop()
+        for item in maybe_awaitable:
+            if inspect.isawaitable(item) or inspect.iscoroutine(item):
+                if loop.is_running():
+                    last = await item
+                else:
+                    last = loop.run_until_complete(item)
+            else:
                 last = item
-            return last
-        except TypeError:
-            # Not iterable - fall through
-            pass
+        return last
 
     # Fallback: return as-is
     return maybe_awaitable
