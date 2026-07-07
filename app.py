@@ -281,33 +281,33 @@ async def execute_live_workflow():
             <div class="metric-delta" style="color: #8a99ad;">Operational Score</div>
         </div>
         """, unsafe_allow_html=True)
-        
-        arr_placeholder.markdown(f"""
+
+    arr_placeholder.markdown(f"""
         <div class="metric-card">
             <div class="metric-title">Total ARR</div>
             <div class="metric-value">${summary.revenue_summary.total_arr:,.0f}</div>
             <div class="metric-delta" style="color: #8a99ad;">Active Contracts</div>
         </div>
         """, unsafe_allow_html=True)
-        
-        risk_placeholder.markdown(f"""
+
+    risk_placeholder.markdown(f"""
         <div class="metric-card">
             <div class="metric-title">Revenue at Risk</div>
             <div class="metric-value" style="color: #e53935;">${summary.revenue_summary.revenue_at_risk:,.0f}</div>
             <div class="metric-delta" style="color: #8a99ad;">Expected Loss</div>
         </div>
         """, unsafe_allow_html=True)
-        
-        forecast_placeholder.markdown(f"""
+
+    forecast_placeholder.markdown(f"""
         <div class="metric-card">
             <div class="metric-title">30-Day Forecast</div>
             <div class="metric-value" style="color: #58a6ff;">${summary.revenue_summary.forecasted_revenue_next_30_days:,.0f}</div>
             <div class="metric-delta" style="color: #8a99ad;">Weighted Deals</div>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Populate Recommendations
-        with rec_placeholder.container():
+
+    # Populate Recommendations
+    with rec_placeholder.container():
             st.markdown("### 📋 Actions Requiring Approval Today")
             for rec in summary.todays_recommendations:
                 # Color code urgency
