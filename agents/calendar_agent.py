@@ -219,7 +219,12 @@ async def run_calendar_analysis(model_name: str = "gemini-2.0-flash") -> Calenda
     """
     agent = create_calendar_agent(model_name=model_name)
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, session_service=session_service, app_name="revenue_guardian")
+    runner = Runner(
+        agent=agent,
+        session_service=session_service,
+        app_name="revenue_guardian",
+        auto_create_session=True,
+    )
 
     prompt = (
         "Analyze all calendar events and availability as of 2026-06-30. "

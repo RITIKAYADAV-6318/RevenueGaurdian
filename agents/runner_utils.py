@@ -17,41 +17,55 @@ def make_new_message(text: str, role: str = "user") -> types.Content:
     return types.Content(parts=[types.Part.from_text(text=text)], role=role)
 
 
+def _extract_response_value(item: Any) -> Any:
+    if item is None:
+        return None
+    if hasattr(item, 'structured_output'):
+        structured = getattr(item, 'structured_output')
+        if structured is not None:
+            return structured
+    if hasattr(item, 'output'):
+        output = getattr(item, 'output')
+        if output is not None:
+            return output
+    return item
+
+
 async def run_runner_and_get_response(maybe_awaitable) -> Any:
-    """Consume a coroutine, async generator, or sync generator and return the last item.
+    """Consume a coroutine, async generator, or sync generator and return the final meaningful response.
 
     If a coroutine is provided, it is awaited and the result returned.
-    If an async generator is provided, it is iterated and the last yielded value returned.
-    If a sync generator is provided, it is iterated and the last yielded value returned.
+    If an async generator is provided, it is iterated and the last meaningful response value returned.
+    If a sync generator is provided, it is iterated and the last meaningful response value returned.
     Otherwise the value is returned directly.
     """
-    # Awaitables (coroutines, futures, or objects implementing __await__)
-    if inspect.isawaitable(maybe_awaitable):
-        return await maybe_awaitable
-
     # Async generator (async for ...)
     if inspect.isasyncgen(maybe_awaitable):
-        last = None
+        last_item = None
+        last_response = None
         async for item in maybe_awaitable:
             if inspect.isawaitable(item) or inspect.iscoroutine(item):
-                last = await item
-            else:
-                last = item
-        return last
+                item = await item
+            last_item = item
+            last_response = _extract_response_value(item)
+        return last_response if last_response is not None else last_item
 
     # Sync generator
     if inspect.isgenerator(maybe_awaitable):
-        last = None
-        loop = asyncio.get_event_loop()
+        last_item = None
+        last_response = None
+        loop = asyncio.get_running_loop()
         for item in maybe_awaitable:
             if inspect.isawaitable(item) or inspect.iscoroutine(item):
-                if loop.is_running():
-                    last = await item
-                else:
-                    last = loop.run_until_complete(item)
-            else:
-                last = item
-        return last
+                item = await item
+            last_item = item
+            last_response = _extract_response_value(item)
+        return last_response if last_response is not None else last_item
+
+    # Awaitables (coroutines, futures, or objects implementing __await__)
+    if inspect.isawaitable(maybe_awaitable):
+        result = await maybe_awaitable
+        return _extract_response_value(result)
 
     # Fallback: return as-is
-    return maybe_awaitable
+    return _extract_response_value(maybe_awaitable)

@@ -124,11 +124,16 @@ class RevOpsOrchestrator:
         Returns:
             The structured Pydantic output from the agent.
         """
-        runner = Runner(agent=agent, session_service=self.session_service, app_name="revenue_guardian")
+        runner = Runner(
+            agent=agent,
+            session_service=self.session_service,
+            app_name="revenue_guardian",
+            auto_create_session=True,
+        )
         new_message = make_new_message(prompt, role="user")
         raw = runner.run(user_id="system", session_id=session_id, new_message=new_message)
         response = await run_runner_and_get_response(raw)
-        return response.structured_output
+        return response
 
     async def execute_workflow(self, run_id: str) -> OrchestrationRunResult:
         """

@@ -241,7 +241,12 @@ async def run_executive_summary(model_name: str = "gemini-2.0-flash") -> Executi
     """
     agent = create_summary_agent(model_name=model_name)
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, session_service=session_service, app_name="revenue_guardian")
+    runner = Runner(
+        agent=agent,
+        session_service=session_service,
+        app_name="revenue_guardian",
+        auto_create_session=True,
+    )
 
     prompt = (
         "Synthesize all subagent reports as of 2026-06-30. "
